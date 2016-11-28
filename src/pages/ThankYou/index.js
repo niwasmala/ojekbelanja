@@ -58,8 +58,8 @@ export default class ThankYou extends Component {
     } = this.state;
 
     const pemesanList = [
-      { term: 'No. Pesanan', definition: '' },
-      { term: 'Tanggal Pengiriman', definition: '' },
+      { term: 'No. Pesanan', definition: user.orderId },
+      { term: 'Tanggal Pengiriman', definition: user.deliverydate },
       { term: 'Nama', definition: user.name },
       { term: 'Panggilan', definition: user.nickname },
       { term: 'Email', definition: user.email },

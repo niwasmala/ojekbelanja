@@ -1,9 +1,11 @@
 import React, { Component, PropTypes as T } from 'react';
+import { DateField } from 'react-date-picker';
 import classnames from 'classnames';
 
-import './TextField.css';
+import 'react-date-picker/index.css'
+import './DatePicker.css';
 
-export default class TextField extends Component {
+export default class DatePicker extends Component {
   constructor(props) {
     super(props);
 
@@ -36,6 +38,8 @@ export default class TextField extends Component {
 
   render() {
     const {
+      dateFormat,
+      minDate,
       className,
       type,
       display,
@@ -47,9 +51,6 @@ export default class TextField extends Component {
       message,
       required,
       onChange,
-      min,
-      max,
-      step,
       disabled
     } = this.props;
     const {
@@ -57,33 +58,37 @@ export default class TextField extends Component {
       isFocused,
     } = this.state
 
-    const textFieldClass = classnames(
+    const DatePickerClass = classnames(
       className,
-      'TextField',
+      'DatePicker',
     )
     const labelClass = classnames(
-      'TextField-label'
+      'DatePicker-label'
     )
     const inputClass = classnames(
-      'TextField-input',
-      `TextField-input-${display}`,
+      'DatePicker-input',
+      `DatePicker-input-${display}`,
       {
-        'TextField-input-is-error': !isPristine && !isFocused &&
+        'DatePicker-input-is-error': !isPristine && !isFocused &&
         (value ? !validate(value) : required)
       }
     )
 
     return (
-      <div className={textFieldClass}>
+      <div className={DatePickerClass}>
         {label &&
           <label className={labelClass} htmlFor={name}>
             {label}
             {!required &&
-              <span className="TextField-label-span"> - Opsional</span>
+              <span className="DatePicker-label-span"> - Opsional</span>
             }
           </label>
         }
-        <input
+        <DateField
+          updateOnDateClick
+          collapseOnDateClick
+          minDate={minDate}
+          dateFormat={dateFormat}
           className={inputClass}
           id={name}
           type={type}
@@ -91,21 +96,18 @@ export default class TextField extends Component {
           placeholder={placeholder}
           value={value}
           onFocus={(e) => this.onFocus(name, e.target.value)}
-          onChange={(e) => onChange(name, e.target.value)}
+          onChange={(e) => onChange(name, e)}
           onBlur={(e) => this.onBlur(name, e.target.value)}
           required={required}
-          min={min}
-          max={max}
-          step={step}
           disabled={disabled}
           />
         {!isPristine && !isFocused &&
           (value ?
             (!validate(value) && /* Validation Message */
-              <span className="TextField-message">{`* ${message}`}</span>)
+              <span className="DatePicker-message">{`* ${message}`}</span>)
             :
             (required && /* Requiring Message */
-              <span className="TextField-message">{`* ${label} harus diisi`}</span>)
+              <span className="DatePicker-message">{`* ${label} harus diisi`}</span>)
           )
         }
       </div>
@@ -113,50 +115,26 @@ export default class TextField extends Component {
   }
 }
 
-TextField.defaultProps = {
-  type: 'text',
+DatePicker.defaultProps = {
+  dateFormat: 'DD-MM-YYYY',
   display: 'fullwidth',
-  value: '',
   validate: () => true,
   message: '',
-  min: 0,
-  max: 100,
-  step: 1,
   disabled: false
 }
 
-TextField.propTypes = {
-  type: T.oneOf([                   // Input Type https://developer.mozilla.org/en/docs/Web/HTML/Element/input
-    'date',
-    'email',
-    'file',
-    'month',
-    'number',
-    'password',
-    'search',
-    'tel',
-    'text',
-    'time',
-    'url',
-    'week',
-  ]),
-  display: T.oneOf([                // TextField Display
-    'fullwidth',                    // Full Width
-    'content',                      // Content Width
-    'fixed',                        // Fixed Width
-  ]),
+DatePicker.propTypes = {
+  dateFormat: T.string,             // Date Format
+  minDate: T.any,                   // Minimum Date Selectable
   name: T.string,                   // Name
   label: T.string,                  // Label
   placeholder: T.string,            // Placeholder
-  value: T.any.isRequired,          // Value
+  value: T.any,                     // Value
   onChange: T.func.isRequired,      // onChange Function
   onBlur: T.func,                   // onBlur Function
   noValidation: T.bool,             // Flag to disable Validation
   validate: T.func,                 // Validation Function
   message: T.string,                // Error Message
   required: T.bool,                 // is Required
-  min: T.number,                    // Minimum Value for Number/Range Type
-  max: T.number,                    // Maximum Value for Number/Range Type
-  step: T.number,                   // Step for Range Number/Type
   disabled: T.bool,                 // is Disabled
 }

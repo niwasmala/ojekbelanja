@@ -1,11 +1,13 @@
 import React, { PropTypes as T } from 'react';
+import moment from 'moment';
 
 import Form from '../../../components/Form';
 import Button from '../../../components/Button';
 import TextField from '../../../components/TextField';
 import TextArea from '../../../components/TextArea';
+import DatePicker from '../../../components/DatePicker';
 import { update, clear } from '../../../services/form';
-import { isEmailValid, isPhoneValid } from '../../../services/form';
+import { isEmailValid, isPhoneValid, randomAlphaNumeric } from '../../../services/form';
 import './Pemesan.css';
 
 export default function Pemesan(props) {
@@ -17,6 +19,12 @@ export default function Pemesan(props) {
   } = props;
 
   const user = context.state[name];
+
+  // TODO orderdate, deliverydate, orderId saved in user?
+
+  // TODO generate orderid ?
+  user.orderdate = moment().format("DD-MM-YYYY");
+  user.orderId = randomAlphaNumeric(6);
 
   const isUserInvalid = (user) =>
     !user.name ||
@@ -31,6 +39,10 @@ export default function Pemesan(props) {
 
   const onReset = (field, value) => {
     clear(context, name);
+
+    // TODO clear set local storage to empty object, orderdate and orderId ?
+    onChange("orderdate", user.orderdate);
+    onChange("orderId", user.orderId);
   }
 
   const onSubmit = (e, tokoId) => {
@@ -70,6 +82,25 @@ export default function Pemesan(props) {
         </div>
       }
       >
+      <DatePicker
+        renderCalendarIcon={false}
+        name="orderdate"
+        label="Tanggal Order"
+        placeholder="Tanggal Order"
+        value={user.orderdate}
+        onChange={onChange}
+        disabled={true}
+        required
+        />
+      <DatePicker
+        name="deliverydate"
+        label="Tanggal Pengantaran"
+        placeholder="Tanggal Pengantaran"
+        value={user.deliverydate}
+        onChange={onChange}
+        minDate={moment()}
+        required
+        />
       <TextField
         name="name"
         label="Nama"
